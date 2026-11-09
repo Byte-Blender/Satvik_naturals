@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Products - Ecommerce{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Sidebar Filters -->
+        <div class="col-md-3">
+            <h5>Categories</h5>
+            <div class="list-group">
+                <a href="{% url 'product_list' %}" class="list-group-item list-group-item-action">
+                    All Products
+                </a>
+                {% for category in categories %}
+                    <a href="?category={{ category.id }}" 
+                       class="list-group-item list-group-item-action {% if category.id|stringformat:'s' == selected_category %}active{% endif %}">
+                        {{ category.name }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="col-md-9">
+            <h2>Products</h2>
+            
+            {% if products %}
+                <div class="row">
+                    {% for product in products %}
+                        <div class="col-md-4 mb-4">
+                            <div class="card product-card h-100">
+                                {% if product.image %}
+                                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                                {% else %}
+                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                        <span class="text-muted">No Image</span>
+                                    </div>
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ product.name }}</h5>
+                                    <p class="card-text text-muted">{{ product.description|truncatewords:10 }}</p>
+                                    <p class="card-text"><strong>₹{{ product.price }}</strong></p>
+                                    <p class="card-text text-sm">
+                                        <span class="badge bg-{% if product.stock > 0 %}success{% else %}danger{% endif %}">
+                                            {% if product.stock > 0 %}In Stock ({{ product.stock }}){% else %}Out of Stock{% endif %}
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="card-footer">
+                                    <a href="{% url 'product_detail' product.slug %}" class="btn btn-primary btn-sm w-100">
+                                        View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">No products found.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

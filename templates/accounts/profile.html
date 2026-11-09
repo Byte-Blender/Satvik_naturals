@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile - Ecommerce{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5>{{ user.get_full_name|default:user.username }}</h5>
+                    <p class="text-muted">{{ user.email }}</p>
+                    {% if profile.phone %}<p>{{ profile.phone }}</p>{% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <h3>My Orders</h3>
+            {% if orders %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Payment</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                            <tr>
+                                <td>{{ order.order_id }}</td>
+                                <td>{{ order.created_at|date:"d M Y" }}</td>
+                                <td>₹{{ order.total_price }}</td>
+                                <td><span class="badge bg-info">{{ order.get_status_display }}</span></td>
+                                <td><span class="badge bg-{% if order.is_paid %}success{% else %}warning{% endif %}">
+                                    {% if order.is_paid %}Paid{% else %}Pending{% endif %}
+                                </span></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No orders yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
